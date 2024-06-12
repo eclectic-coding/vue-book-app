@@ -1,12 +1,14 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
 
 /* component imports */
-@import "components/buttons.css";
-@import "components/forms.css";
-@import "components/links.css";
-@import "components/typography.css";
+@import 'components/buttons.css';
+@import 'components/cards.css';
+@import 'components/forms.css';
+@import 'components/links.css';
+@import 'components/tables.css';
+@import 'components/typography.css';
 
-@import "tailwindcss/utilities";
+@import 'tailwindcss/utilities';
 
 /* additional styles */

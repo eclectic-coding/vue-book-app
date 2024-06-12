@@ -7,11 +7,11 @@ import { useAuthStore } from '@/stores/authStore.js'
 
 const requireAuth = (to, from, next) => {
   const authStore = useAuthStore()
-  const user = authStore.currentUser();
+  const user = authStore.currentUser()
   if (user) {
-    next();
+    next()
   } else {
-    next("/signin");
+    next('/signin')
   }
 }
 
@@ -23,7 +23,7 @@ const router = createRouter({
     { path: '/', name: 'home', component: HomeView },
     { path: '/register', name: 'register', component: RegisterView },
     { path: '/signin', name: 'signin', component: LoginView },
-    { path: '/dashboard', name: 'dashboard', component: DashboardView, beforeEnter: requireAuth}
+    { path: '/dashboard', name: 'dashboard', component: DashboardView, beforeEnter: requireAuth }
   ]
 })
 
