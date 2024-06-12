@@ -1,0 +1,13 @@
+.nav-link {
+    @apply block py-2 px-3 text-gray-900 rounded md:border-0 md:p-0;
+    @apply text-gray-900 capitalize hover:bg-gray-200 md:dark:hover:text-primary-500 md:hover:bg-transparent md:border-0 md:hover:text-primary-700 md:p-0;
+    @apply dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent;
+
+    &.hover {
+        @apply text-primary-500;
+    }
+
+    a {
+        @apply text-gray-200;
+    }
+}

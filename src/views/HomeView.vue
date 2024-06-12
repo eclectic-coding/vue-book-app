@@ -1,5 +1,5 @@
 <template>
-  <main class="text-3xl font-bold underline home">
+  <main class="text-3xl font-bold">
     <h1>Home</h1>
   </main>
 </template>
@@ -8,11 +8,4 @@
 </script>
 
 <style scoped>
-.home {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  margin-top: 2rem;
-}
 </style>
