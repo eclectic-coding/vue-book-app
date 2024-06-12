@@ -15,6 +15,9 @@ export const useAuthStore = defineStore('authStore', {
     loadingUser: false,
     loadingSession: false
   }),
+  persist: {
+    storage: localStorage
+  },
   actions: {
     async registerUser(name, username, email, password) {
       this.loadingUser = true
@@ -42,8 +45,8 @@ export const useAuthStore = defineStore('authStore', {
         const {user} = await signInWithEmailAndPassword(auth, email, password)
 
         await this.retrieveFromFirebase(user)
-
-        await router.push('/dashboard')
+        console.log('User logged in')
+        router.push('/dashboard')
       } catch (error) {
         console.error(error)
       } finally {
@@ -51,16 +54,23 @@ export const useAuthStore = defineStore('authStore', {
       }
     },
     initAuth() {
-      this.loadingSession = true
-      onAuthStateChanged(auth, user => {
-        if (user) {
-          this.retrieveFromFirebase(user).then(r => {})
-          router.push('/dashboard')
-        } else {
-          this.userData = null
-        }
-        this.loadingSession = false
-      })
+      if (this.userData) {
+        router.push('/dashboard')
+      } else if (auth.currentUser) {
+        this.retrieveFromFirebase(auth.currentUser)
+        router.push('/dashboard')
+      } else {
+        this.loadingSession = true
+        onAuthStateChanged(auth, user => {
+          if (user) {
+            this.retrieveFromFirebase(user)
+            router.push('/dashboard')
+          } else {
+            this.userData = null
+          }
+          this.loadingSession = false
+        })
+      }
     },
     async saveToFirebase(user, name, username) {
       let database = getDatabase()
@@ -75,23 +85,27 @@ export const useAuthStore = defineStore('authStore', {
     },
     async retrieveFromFirebase(user) {
       const dbRef = ref(getDatabase())
-      get(child(dbRef, `users/${user.uid}`))
-        .then(snapshot => {
-          if (snapshot.exists()) {
-            this.userData = {
-              name: snapshot.val().name,
-              username: snapshot.val().username,
-              email: snapshot.val().email,
-              uid: snapshot.val().uid
+      return new Promise((resolve, reject) => {
+        get(child(dbRef, `users/${user.uid}`))
+          .then(snapshot => {
+            if (snapshot.exists()) {
+              this.userData = {
+                name: snapshot.val().name,
+                username: snapshot.val().username,
+                email: snapshot.val().email,
+                uid: snapshot.val().uid
+              }
+              resolve()
+            } else {
+              console.log('No data available')
+              resolve()
             }
-            console.log(snapshot.val())
-          } else {
-            console.log('No data available')
-          }
-        })
-        .catch(error => {
-          console.error(error)
-        })
+          })
+          .catch(error => {
+            console.error(error)
+            reject(error)
+          })
+      })
     },
     async logoutUser() {
       this.loadingUser = true
