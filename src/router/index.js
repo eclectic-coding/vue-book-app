@@ -16,7 +16,7 @@ const requireAuth = (to, from, next) => {
 }
 
 const router = createRouter({
-  linkActiveClass: 'text-primary-500',
+  linkActiveClass: 'text-primary-700',
   linkExactActiveClass: 'font-semibold',
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
