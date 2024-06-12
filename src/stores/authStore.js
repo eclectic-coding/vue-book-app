@@ -27,16 +27,7 @@ export const useAuthStore = defineStore('authStore', {
           uid: user.uid
         }
 
-        // TODO: save to db - need to move to a function
-        let database = getDatabase()
-        let userDetails = {
-          name: name,
-          username: username,
-          email: email,
-          uid: user.uid
-        }
-        const usersRef = ref(database, `users/${user.uid}`)
-        await set(usersRef, userDetails)
+        await this.saveToFirebase(user, name, username)
 
         await router.push('/')
       } catch (error) {
@@ -50,25 +41,7 @@ export const useAuthStore = defineStore('authStore', {
       try {
         const {user} = await signInWithEmailAndPassword(auth, email, password)
 
-        // TODO: need to move to a function
-        const dbRef = ref(getDatabase())
-        get(child(dbRef, `users/${user.uid}`))
-          .then(snapshot => {
-            if (snapshot.exists()) {
-              this.userData = {
-                name: snapshot.val().name,
-                username: snapshot.val().username,
-                email: snapshot.val().email,
-                uid: snapshot.val().uid
-              }
-              console.log(snapshot.val())
-            } else {
-              console.log('No data available')
-            }
-          })
-          .catch(error => {
-            console.error(error)
-          })
+        await this.retrieveFromFirebase(user)
 
         await router.push('/dashboard')
       } catch (error) {
@@ -81,13 +54,44 @@ export const useAuthStore = defineStore('authStore', {
       this.loadingSession = true
       onAuthStateChanged(auth, user => {
         if (user) {
-          // need to read from database
-          this.userData = {email: user.email, uid: user.uid}
+          this.retrieveFromFirebase(user).then(r => {})
+          router.push('/dashboard')
         } else {
           this.userData = null
         }
         this.loadingSession = false
       })
+    },
+    async saveToFirebase(user, name, username) {
+      let database = getDatabase()
+      let userDetails = {
+        name: name,
+        username: username,
+        email: user.email,
+        uid: user.uid
+      }
+      const usersRef = ref(database, `users/${user.uid}`)
+      await set(usersRef, userDetails)
+    },
+    async retrieveFromFirebase(user) {
+      const dbRef = ref(getDatabase())
+      get(child(dbRef, `users/${user.uid}`))
+        .then(snapshot => {
+          if (snapshot.exists()) {
+            this.userData = {
+              name: snapshot.val().name,
+              username: snapshot.val().username,
+              email: snapshot.val().email,
+              uid: snapshot.val().uid
+            }
+            console.log(snapshot.val())
+          } else {
+            console.log('No data available')
+          }
+        })
+        .catch(error => {
+          console.error(error)
+        })
     },
     async logoutUser() {
       this.loadingUser = true
