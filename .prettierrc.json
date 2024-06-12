@@ -13,5 +13,6 @@
   "proseWrap": "always",
   "htmlWhitespaceSensitivity": "ignore",
   "endOfLine": "lf",
-  "singleAttributePerLine": false
+  "singleAttributePerLine": false,
+  "plugins": ["prettier-plugin-tailwindcss"]
 }

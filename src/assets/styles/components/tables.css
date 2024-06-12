@@ -1,8 +1,8 @@
 .admin-table {
-  @apply w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 border rounded;
+  @apply w-full rounded border text-left text-sm text-gray-500 dark:text-gray-400 rtl:text-right;
 
   thead {
-    @apply text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400;
+    @apply bg-gray-100 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400;
   }
 
   thead tr th {
@@ -10,7 +10,7 @@
   }
 
   tbody tr {
-    @apply bg-white border-b dark:bg-gray-800 dark:border-gray-700;
+    @apply border-b bg-white dark:border-gray-700 dark:bg-gray-800;
   }
 
   tbody tr td {
