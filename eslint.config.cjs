@@ -1,7 +1,8 @@
 /* eslint-env node */
-require('@rushstack/eslint-patch/modern-module-resolution')
 
 module.exports = {
+  files: ['*.vue, *.js, *.cjs, *.mjs'],
+  ignores: ['node_modules', 'dist', 'build', 'public', 'coverage', '*.config.js'],
   root: true,
   'extends': [
     'plugin:vue/vue3-essential',

@@ -1,10 +1,10 @@
 .btn {
-  @apply focus:ring-4 font-medium focus:outline-none;
+  @apply font-medium focus:outline-none focus:ring-4;
   @apply px-5 py-2.5;
 }
 
 .btn-sm {
-  @apply focus:ring-4 font-medium focus:outline-none;
+  @apply font-medium focus:outline-none focus:ring-4;
   @apply px-3 py-1.5;
 }
 

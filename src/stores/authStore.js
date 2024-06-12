@@ -1,11 +1,11 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut
 } from 'firebase/auth'
-import { auth } from '../firebase'
+import {auth} from '../firebase'
 import router from '../router'
 
 export const useAuthStore = defineStore('authStore', {
@@ -18,8 +18,8 @@ export const useAuthStore = defineStore('authStore', {
     async registerUser(email, password) {
       this.loadingUser = true
       try {
-        const { user } = await createUserWithEmailAndPassword(auth, email, password)
-        this.userData = { email: user.email, uid: user.uid }
+        const {user} = await createUserWithEmailAndPassword(auth, email, password)
+        this.userData = {email: user.email, uid: user.uid}
         console.log(user)
         await router.push('/')
       } catch (error) {
@@ -31,8 +31,8 @@ export const useAuthStore = defineStore('authStore', {
     async loginUser(email, password) {
       this.loadingUser = true
       try {
-        const { user } = await signInWithEmailAndPassword(auth, email, password)
-        this.userData = { email: user.email, uid: user.uid }
+        const {user} = await signInWithEmailAndPassword(auth, email, password)
+        this.userData = {email: user.email, uid: user.uid}
         console.log(user)
         await router.push('/dashboard')
       } catch (error) {
@@ -43,9 +43,9 @@ export const useAuthStore = defineStore('authStore', {
     },
     initAuth() {
       this.loadingSession = true
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, user => {
         if (user) {
-          this.userData = { email: user.email, uid: user.uid }
+          this.userData = {email: user.email, uid: user.uid}
         } else {
           this.userData = null
         }

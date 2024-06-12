@@ -1,5 +1,5 @@
 <template>
-  <main class="mx-auto p-4 sm:p-0 w-full sm:w-2/3 md:w-1/4">
+  <main class="mx-auto w-full p-4 sm:w-2/3 sm:p-0 md:w-1/4">
     <h1 class="mb-4">Register</h1>
     <form @submit.prevent="handleSubmit">
       <div class="mb-6">
@@ -28,8 +28,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useAuthStore } from '../stores/authStore'
+import {ref} from 'vue'
+import {useAuthStore} from '../stores/authStore'
 
 const authStore = useAuthStore()
 
