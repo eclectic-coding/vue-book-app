@@ -1,7 +1,0 @@
-node_modules
-build
-public
-*.config.js
-coverage/
-config/
-dist/
