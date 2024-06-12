@@ -7,21 +7,23 @@ import { useAuthStore } from '@/stores/authStore.js'
 
 const requireAuth = (to, from, next) => {
   const authStore = useAuthStore()
-  const user = authStore.currentUser();
+  const user = authStore.currentUser()
   if (user) {
-    next();
+    next()
   } else {
-    next("/signin");
+    next('/signin')
   }
 }
 
 const router = createRouter({
+  linkActiveClass: 'text-primary-500',
+  linkExactActiveClass: 'font-semibold',
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: 'home', component: HomeView },
     { path: '/register', name: 'register', component: RegisterView },
     { path: '/signin', name: 'signin', component: LoginView },
-    { path: '/dashboard', name: 'dashboard', component: DashboardView, beforeEnter: requireAuth}
+    { path: '/dashboard', name: 'dashboard', component: DashboardView, beforeEnter: requireAuth }
   ]
 })
 

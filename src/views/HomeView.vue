@@ -1,18 +1,10 @@
 <template>
-  <main class="home">
-    <h1>Home</h1>
+  <main class="mx-auto p-4 sm:p-0 w-full max-w-2xl">
+    <h1 class="mb-4 text-3xl font-bold leading-tight text-gray-900 lg:mb-6 lg:text-4xl">Home</h1>
+    <p>some text</p>
   </main>
 </template>
 
-<script setup>
-</script>
+<script setup></script>
 
-<style scoped>
-.home {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
-  margin-top: 2rem;
-}
-</style>
+<style scoped></style>
