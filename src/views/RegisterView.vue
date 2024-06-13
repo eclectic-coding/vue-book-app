@@ -12,6 +12,7 @@
 
       <div class="mb-6">
         <InputText name="email" placeholder="Email address" label="Email address" />
+        <ErrorMessage :errorMessage="authStore.registerError" />
       </div>
 
       <div class="mb-8">
@@ -29,11 +30,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useAuthStore } from '../stores/authStore'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import InputText from '@/components/forms/InputText.vue'
+import ErrorMessage from '@/components/forms/ErrorMessage.vue'
 
 const authStore = useAuthStore()
 
