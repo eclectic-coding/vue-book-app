@@ -14,7 +14,8 @@ export const useAuthStore = defineStore('authStore', {
     userData: null,
     loadingUser: false,
     loadingSession: false,
-    registerError: null
+    registerError: null,
+    loginError: null
   }),
   persist: {
     storage: localStorage
@@ -50,16 +51,21 @@ export const useAuthStore = defineStore('authStore', {
         const { user } = await signInWithEmailAndPassword(auth, email, password)
 
         await this.retrieveFromFirebase(user)
-        console.log('User logged in')
+
         router.push('/dashboard')
       } catch (error) {
-        console.error(error)
+        if (error.code === 'auth/invalid-credential') {
+          this.loginError = 'The provided email and/or password is invalid.' // Set the error message
+        } else {
+          console.error(error)
+        }
       } finally {
         this.loadingUser = false
       }
     },
     initAuth() {
       this.registerError = null
+      this.loginError = null
 
       if (this.userData) {
         router.push('/dashboard')

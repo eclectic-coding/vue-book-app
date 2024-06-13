@@ -1,6 +1,7 @@
 <template>
   <main class="mx-auto w-full p-4 sm:w-2/3 sm:p-0 md:w-1/4">
     <h1 class="mb-4">Login</h1>
+    <ErrorMessage :errorMessage="authStore.loginError" />
     <form @submit.prevent="onSubmit">
       <div class="mb-6">
         <InputText name="email" placeholder="Email address" label="Email address" />
@@ -19,6 +20,7 @@ import { useAuthStore } from '../stores/authStore'
 import { useForm } from 'vee-validate'
 import * as yup from 'yup'
 import InputText from '@/components/forms/InputText.vue'
+import ErrorMessage from '@/components/forms/ErrorMessage.vue'
 
 const authStore = useAuthStore()
 
