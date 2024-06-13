@@ -1,20 +1,13 @@
 <template>
   <main class="mx-auto w-full p-4 sm:w-2/3 sm:p-0 md:w-1/4">
     <h1 class="mb-4">Login</h1>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="onSubmit">
       <div class="mb-6">
-        <label for="email" class="form-label">Email address</label>
-        <input type="email" placeholder="Email address" v-model.trim="email" class="form-control" />
+        <InputText name="email" placeholder="Email address" label="Email address" />
       </div>
 
       <div class="mb-8">
-        <label for="password" class="form-label">Password</label>
-        <input
-          type="password"
-          placeholder="Password"
-          v-model.trim="password"
-          class="form-control"
-        />
+        <InputText name="password" type="password" placeholder="Password" label="Password" />
       </div>
       <button type="submit" :disabled="authStore.loadingUser" class="btn btn-primary">Login</button>
     </form>
@@ -22,17 +15,23 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import {useAuthStore} from '../stores/authStore'
+import { useAuthStore } from '../stores/authStore'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import InputText from '@/components/forms/InputText.vue'
 
 const authStore = useAuthStore()
 
-const email = ref(null)
-const password = ref('')
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    email: yup.string().email().required(),
+    password: yup.string().required()
+  })
+})
 
-const handleSubmit = async () => {
-  await authStore.loginUser(email.value, password.value)
-}
+const onSubmit = handleSubmit(async values => {
+  await authStore.loginUser(values.email, values.password)
+})
 </script>
 
 <style></style>
