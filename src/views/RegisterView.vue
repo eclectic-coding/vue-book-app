@@ -19,6 +19,15 @@
         <InputText name="password" type="password" placeholder="Password" label="Password" />
       </div>
 
+      <div class="mb-8">
+        <InputText
+          name="passwordConfirm"
+          type="password"
+          placeholder="Confirm password"
+          label="Confirm password"
+        />
+      </div>
+
       <div class="flex justify-between">
         <button type="submit" :disabled="authStore.loadingUser" class="btn btn-primary">
           Create Account
@@ -43,7 +52,8 @@ const { handleSubmit } = useForm({
     name: yup.string().required(),
     userName: yup.string().required(),
     email: yup.string().email().required(),
-    password: yup.string().required()
+    password: yup.string().required().min(6),
+    passwordConfirm: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match')
   })
 })
 
