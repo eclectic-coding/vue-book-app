@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import {
   createUserWithEmailAndPassword,
+  getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut
 } from 'firebase/auth'
 import { auth } from '../firebase'
@@ -134,6 +136,20 @@ export const useAuthStore = defineStore('authStore', {
     },
     currentUser() {
       return this.userData
+    },
+    async resetPassword(userEmail) {
+      const actionCodeSettings = {
+        url: `${import.meta.env.VITE_APP_URL}/signin`,
+        handleCodeInApp: true
+      }
+      try {
+        await sendPasswordResetEmail(auth, userEmail, {
+          url: `${import.meta.env.VITE_APP_URL}/signin`,
+          handleCodeInApp: true
+        })
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 })
