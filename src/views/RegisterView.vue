@@ -1,34 +1,30 @@
 <template>
   <main class="mx-auto w-full p-4 sm:w-2/3 sm:p-0 md:w-1/4">
     <h1 class="mb-4">Register</h1>
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="onSubmit">
       <div class="mb-6">
-        <label for="name">Name</label>
-        <input type="text" placeholder="Name" v-model.trim="name" class="form-control required" />
+        <InputText name="name" placeholder="Name" label="Name" />
       </div>
 
       <div class="mb-6">
-        <label for="email">Username</label>
-        <input
-          type="text"
-          placeholder="Name"
-          v-model.trim="username"
-          class="form-control required"
-        />
+        <InputText name="userName" placeholder="Display name" label="Display name" />
       </div>
 
       <div class="mb-6">
-        <label for="email">Email address</label>
-        <input type="email" placeholder="Email address" v-model.trim="email" class="form-control" />
+        <InputText name="email" placeholder="Email address" label="Email address" />
+        <ErrorMessage :errorMessage="authStore.registerError" />
       </div>
 
       <div class="mb-8">
-        <label for="password">Password</label>
-        <input
+        <InputText name="password" type="password" placeholder="Password" label="Password" />
+      </div>
+
+      <div class="mb-8">
+        <InputText
+          name="passwordConfirm"
           type="password"
-          placeholder="Password"
-          v-model.trim="password"
-          class="form-control"
+          placeholder="Confirm password"
+          label="Confirm password"
         />
       </div>
 
@@ -43,19 +39,27 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import {useAuthStore} from '../stores/authStore'
+import { useAuthStore } from '../stores/authStore'
+import { useForm } from 'vee-validate'
+import * as yup from 'yup'
+import InputText from '@/components/forms/InputText.vue'
+import ErrorMessage from '@/components/forms/ErrorMessage.vue'
 
 const authStore = useAuthStore()
 
-const name = ref(null)
-const username = ref(null)
-const email = ref(null)
-const password = ref('')
+const { handleSubmit } = useForm({
+  validationSchema: yup.object({
+    name: yup.string().required(),
+    userName: yup.string().required(),
+    email: yup.string().email().required(),
+    password: yup.string().required().min(6),
+    passwordConfirm: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match')
+  })
+})
 
-const handleSubmit = async () => {
-  await authStore.registerUser(name.value, username.value, email.value, password.value)
-}
+const onSubmit = handleSubmit(async values => {
+  await authStore.registerUser(values.name, values.username, values.email, values.password)
+})
 </script>
 
 <style></style>

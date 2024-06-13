@@ -1,19 +1,23 @@
-import {defineStore} from 'pinia'
+import { defineStore } from 'pinia'
 import {
   createUserWithEmailAndPassword,
+  getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut
 } from 'firebase/auth'
-import {auth} from '../firebase'
+import { auth } from '../firebase'
 import router from '../router'
-import {getDatabase, ref, set, child, get} from 'firebase/database'
+import { getDatabase, ref, set, child, get } from 'firebase/database'
 
 export const useAuthStore = defineStore('authStore', {
   state: () => ({
     userData: null,
     loadingUser: false,
-    loadingSession: false
+    loadingSession: false,
+    registerError: null,
+    loginError: null
   }),
   persist: {
     storage: localStorage
@@ -22,7 +26,7 @@ export const useAuthStore = defineStore('authStore', {
     async registerUser(name, username, email, password) {
       this.loadingUser = true
       try {
-        const {user} = await createUserWithEmailAndPassword(auth, email, password)
+        const { user } = await createUserWithEmailAndPassword(auth, email, password)
         this.userData = {
           name: name,
           username: username,
@@ -34,7 +38,11 @@ export const useAuthStore = defineStore('authStore', {
 
         await router.push('/')
       } catch (error) {
-        console.error(error)
+        if (error.code === 'auth/email-already-in-use') {
+          this.registerError = 'This email is already in use.' // Set the error message
+        } else {
+          console.error(error)
+        }
       } finally {
         this.loadingUser = false
       }
@@ -42,18 +50,25 @@ export const useAuthStore = defineStore('authStore', {
     async loginUser(email, password) {
       this.loadingUser = true
       try {
-        const {user} = await signInWithEmailAndPassword(auth, email, password)
+        const { user } = await signInWithEmailAndPassword(auth, email, password)
 
         await this.retrieveFromFirebase(user)
-        console.log('User logged in')
+
         router.push('/dashboard')
       } catch (error) {
-        console.error(error)
+        if (error.code === 'auth/invalid-credential') {
+          this.loginError = 'The provided email and/or password is invalid.' // Set the error message
+        } else {
+          console.error(error)
+        }
       } finally {
         this.loadingUser = false
       }
     },
     initAuth() {
+      this.registerError = null
+      this.loginError = null
+
       if (this.userData) {
         router.push('/dashboard')
       } else if (auth.currentUser) {
@@ -121,6 +136,20 @@ export const useAuthStore = defineStore('authStore', {
     },
     currentUser() {
       return this.userData
+    },
+    async resetPassword(userEmail) {
+      const actionCodeSettings = {
+        url: `${import.meta.env.VITE_APP_URL}/signin`,
+        handleCodeInApp: true
+      }
+      try {
+        await sendPasswordResetEmail(auth, userEmail, {
+          url: `${import.meta.env.VITE_APP_URL}/signin`,
+          handleCodeInApp: true
+        })
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 })
