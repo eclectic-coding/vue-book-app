@@ -28,7 +28,6 @@ export const useAuthStore = defineStore('authStore', {
       await createUserWithEmailAndPassword(auth, email, password)
         .then(async userCredential => {
           const user = userCredential.user
-          console.log('User registered:', user)
 
           await this.saveToFirebase(user, name, username)
           await this.initAuth()
@@ -87,7 +86,6 @@ export const useAuthStore = defineStore('authStore', {
     },
     async saveToFirebase(user, name, username) {
       let database = getDatabase()
-      console.log('Saving to Firebase', name, username)
       let userDetails = {
         name: name,
         username: username,
