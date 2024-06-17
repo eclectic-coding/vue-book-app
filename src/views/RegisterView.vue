@@ -18,7 +18,7 @@ const { handleSubmit } = useForm({
 })
 
 const onSubmit = handleSubmit(async values => {
-  await authStore.registerUser(values.name, values.username, values.email, values.password)
+  await authStore.registerUser(values.name, values.userName, values.email, values.password)
 })
 </script>
 

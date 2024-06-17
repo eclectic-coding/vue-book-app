@@ -25,27 +25,25 @@ export const useAuthStore = defineStore('authStore', {
   actions: {
     async registerUser(name, username, email, password) {
       this.loadingUser = true
-      try {
-        const { user } = await createUserWithEmailAndPassword(auth, email, password)
-        this.userData = {
-          name: name,
-          username: username,
-          email: user.email,
-          uid: user.uid
-        }
+      await createUserWithEmailAndPassword(auth, email, password)
+        .then(async userCredential => {
+          const user = userCredential.user
+          console.log('User registered:', user)
 
-        await this.saveToFirebase(user, name, username)
-
-        await router.push('/')
-      } catch (error) {
-        if (error.code === 'auth/email-already-in-use') {
-          this.registerError = 'This email is already in use.' // Set the error message
-        } else {
-          console.error(error)
-        }
-      } finally {
-        this.loadingUser = false
-      }
+          await this.saveToFirebase(user, name, username)
+          await this.initAuth()
+          await router.push('/dashboard')
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            this.registerError = 'This email is already in use.' // Set the error message
+          } else {
+            console.error(error)
+          }
+        })
+        .finally(() => {
+          this.loadingUser = false
+        })
     },
     async loginUser(email, password) {
       this.loadingUser = true
@@ -54,7 +52,7 @@ export const useAuthStore = defineStore('authStore', {
 
         await this.retrieveFromFirebase(user)
 
-        router.push('/dashboard')
+        await router.push('/dashboard')
       } catch (error) {
         if (error.code === 'auth/invalid-credential') {
           this.loginError = 'The provided email and/or password is invalid.' // Set the error message
@@ -65,21 +63,21 @@ export const useAuthStore = defineStore('authStore', {
         this.loadingUser = false
       }
     },
-    initAuth() {
+    async initAuth() {
       this.registerError = null
       this.loginError = null
 
       if (this.userData) {
-        router.push('/dashboard')
+        await router.push('/dashboard')
       } else if (auth.currentUser) {
-        this.retrieveFromFirebase(auth.currentUser)
-        router.push('/dashboard')
+        await this.retrieveFromFirebase(auth.currentUser)
+        await router.push('/dashboard') // Move the redirection here
       } else {
         this.loadingSession = true
         onAuthStateChanged(auth, user => {
           if (user) {
             this.retrieveFromFirebase(user)
-            router.push('/dashboard')
+            router.push('/dashboard') // And here
           } else {
             this.userData = null
           }
@@ -89,6 +87,7 @@ export const useAuthStore = defineStore('authStore', {
     },
     async saveToFirebase(user, name, username) {
       let database = getDatabase()
+      console.log('Saving to Firebase', name, username)
       let userDetails = {
         name: name,
         username: username,
