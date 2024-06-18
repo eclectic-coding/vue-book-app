@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, reactive } from 'vue'
 import { createPinia } from 'pinia'
 import piniaPluginPersistedState from 'pinia-plugin-persistedstate'
 import App from './App.vue'
@@ -9,6 +9,8 @@ import './assets/styles/base.css'
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedState)
 
-createApp(App).use(pinia).use(router).mount('#app')
+const GStore = reactive({ flashMessage: '' })
+
+createApp(App).use(pinia).use(router).provide('GStore', GStore).mount('#app')
 
 useAuthStore().initAuth()

@@ -1,10 +1,13 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+import { watch } from 'vue'
+import { useAuthStore } from '@/stores/authStore.js'
 import HomeView from '../views/HomeView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import LoginView from '../views/LoginView.vue'
-import DashboardView from '../views/DashboardView.vue'
-import {useAuthStore} from '@/stores/authStore.js'
-import {watch} from 'vue'
+import DashboardView from '../views/dashboard/Details.vue'
+import Layout from '@/views/dashboard/Layout.vue'
+import NotFound from '@/views/NotFound.vue'
+import NetworkError from '@/views/NetworkError.vue'
 
 const requireAuth = async (to, from, next) => {
   const authStore = useAuthStore()
@@ -34,14 +37,48 @@ const requireAuth = async (to, from, next) => {
 }
 
 const router = createRouter({
-  linkActiveClass: 'text-primary-700',
-  linkExactActiveClass: 'font-semibold',
+  linkActiveClass: 'text-primary-500 font-bold',
+  linkExactActiveClass: 'font-bold',
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {path: '/', name: 'home', component: HomeView},
-    {path: '/register', name: 'register', component: RegisterView},
-    {path: '/signin', name: 'signin', component: LoginView},
-    {path: '/dashboard', name: 'dashboard', component: DashboardView, beforeEnter: requireAuth}
+    { path: '/', name: 'home', component: HomeView },
+    { path: '/register', name: 'register', component: RegisterView },
+    { path: '/signin', name: 'signin', component: LoginView },
+    {
+      path: '/dashboard/:id',
+      name: 'dashboard',
+      props: true,
+      component: Layout,
+      beforeEnter: requireAuth,
+      children: [
+        {
+          path: '',
+          name: 'DashboardDetails',
+          component: DashboardView
+        },
+        {
+          path: 'edit',
+          name: 'DashboardEdit',
+          component: () => import('../views/dashboard/Edit.vue')
+        }
+      ]
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'NotFound',
+      component: NotFound
+    },
+    {
+      path: '/404/:resource',
+      name: '404Resource',
+      component: NotFound,
+      props: true
+    },
+    {
+      path: '/network-error',
+      name: 'NetworkError',
+      component: NetworkError
+    }
   ]
 })
 

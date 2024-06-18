@@ -1,3 +1,15 @@
+<script setup>
+import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore.js'
+import slugify from '@/utils/slugify.js'
+
+const authStore = useAuthStore()
+
+const logout = async () => {
+  await authStore.logoutUser()
+}
+</script>
+
 <template>
   <nav
     class="start-0 top-0 mb-8 w-full border-b border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-900"
@@ -53,7 +65,12 @@
             <RouterLink :to="{ name: 'signin' }" class="nav-link">Sign In</RouterLink>
           </li>
           <li v-if="authStore.userData">
-            <RouterLink :to="{ name: 'dashboard' }" class="nav-link">Dashboard</RouterLink>
+            <RouterLink
+              :to="{ name: 'DashboardDetails', params: { id: slugify(authStore.userData.name) } }"
+              class="nav-link"
+            >
+              Dashboard
+            </RouterLink>
           </li>
           <li v-if="authStore.userData">
             <a href="#" @click="logout" class="nav-link">Log out</a>
@@ -63,16 +80,5 @@
     </div>
   </nav>
 </template>
-
-<script setup>
-import { RouterLink } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore.js'
-
-const authStore = useAuthStore()
-
-const logout = async () => {
-  await authStore.logoutUser()
-}
-</script>
 
 <style scoped></style>

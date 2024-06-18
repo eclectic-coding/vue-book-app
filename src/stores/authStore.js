@@ -31,7 +31,7 @@ export const useAuthStore = defineStore('authStore', {
 
           await this.saveToFirebase(user, name, username)
           await this.initAuth()
-          await router.push('/dashboard')
+          await router.push({ name: 'dashboard', params: { id: authStore.userData.uid } })
         })
         .catch(error => {
           if (error.code === 'auth/email-already-in-use') {
@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('authStore', {
 
         await this.retrieveFromFirebase(user)
 
-        await router.push('/dashboard')
+        await router.push({ name: 'dashboard', params: { id: authStore.userData.uid } })
       } catch (error) {
         if (error.code === 'auth/invalid-credential') {
           this.loginError = 'The provided email and/or password is invalid.' // Set the error message
@@ -67,10 +67,10 @@ export const useAuthStore = defineStore('authStore', {
       this.loginError = null
 
       if (this.userData) {
-        await router.push('/dashboard')
+        await router.push({ name: 'dashboard', params: { id: authStore.userData.uid } })
       } else if (auth.currentUser) {
         await this.retrieveFromFirebase(auth.currentUser)
-        await router.push('/dashboard') // Move the redirection here
+        await router.push({ name: 'dashboard', params: { id: authStore.userData.uid } }) // Move the redirection here
       } else {
         this.loadingSession = true
         onAuthStateChanged(auth, user => {
